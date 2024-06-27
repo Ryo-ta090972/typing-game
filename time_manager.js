@@ -1,11 +1,11 @@
 export class TimeManager {
-  #target;
+  #time;
 
-  constructor(target) {
-    this.#target = target;
+  constructor(time) {
+    this.#time = time;
   }
 
   isTimeOver() {
-    return Date.now() / 1000 > this.#target.endingTime;
+    return Date.now() / 1000 > this.#time;
   }
 }

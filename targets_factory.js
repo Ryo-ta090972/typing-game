@@ -22,8 +22,8 @@ export class TargetsFactory {
     const newTargets = [];
 
     targets.forEach((target) => {
-      const targetTimeManager = new TimeManager(target);
-      const isTimeOver = targetTimeManager.isTimeOver();
+      const timeManager = new TimeManager(target.endingTime);
+      const isTimeOver = timeManager.isTimeOver();
       const newTarget = this.#createNewTarget(targets);
 
       if (isTimeOver) {
