@@ -23,5 +23,7 @@
 
 import { Game } from "./game.js";
 
-const game = new Game("easy");
-game.play();
+const round1 = new Game("easy");
+const round1Score = await round1.play();
+console.log("ゲーム終了");
+console.log(round1Score);

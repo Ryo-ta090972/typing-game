@@ -1,6 +1,7 @@
 import { Score } from "./score.js";
 import { TargetsFactory } from "./targets_factory.js";
 import { Judgment } from "./judgement.js";
+import { TimeManager } from "./time_manager.js";
 
 export class Game {
   #targetsFactory;
@@ -8,6 +9,8 @@ export class Game {
   #score;
   #hittingWords;
   #consecutiveHitCount;
+  #playTime;
+  #endingTime;
 
   constructor(level) {
     this.#targetsFactory = new TargetsFactory(level);
@@ -15,18 +18,46 @@ export class Game {
     this.#score = new Score(level);
     this.#hittingWords = [];
     this.#consecutiveHitCount = 0;
+    this.#playTime = 3000;
+    this.#endingTime = Date.now() + this.#playTime;
   }
 
-  play() {
-    const delay = 50;
+  async play() {
+    const point = this.#startTyping();
+    return point;
+  }
 
-    setInterval(() => this.#updateTargetsAndOutputGameScreen(), delay);
-    this.#acceptUserInputAndToScore();
+  async #startTyping() {
+    try {
+      await Promise.all([
+        this.#updateTargetsAndOutputGameScreen(),
+        this.#acceptUserInputAndToScore(),
+      ]);
+      return this.#score.totalPoint;
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(error.message);
+      } else {
+        throw error;
+      }
+    }
   }
 
   #updateTargetsAndOutputGameScreen() {
-    this.#targets = this.#targetsFactory.update(this.#targets);
-    this.#outputGameScreen();
+    const delay = 50;
+    const timeManager = new TimeManager(this.#endingTime);
+
+    return new Promise((resolve) => {
+      const interval = setInterval(() => {
+        this.#targets = this.#targetsFactory.update(this.#targets);
+        this.#outputGameScreen();
+
+        if (timeManager.isTimeOver()) {
+          clearInterval(interval);
+          resolve();
+        }
+      }, delay);
+    });
   }
 
   #outputGameScreen() {
@@ -34,6 +65,7 @@ export class Game {
     console.log(this.#score.totalPoint);
     console.log(this.#hittingWords.join(""));
     console.log(`現在の時間：${Date.now()}`);
+    console.log(`終了時間：${this.#endingTime}`);
     console.log("");
 
     this.#targets.forEach((target) => {
@@ -46,20 +78,33 @@ export class Game {
   #acceptUserInputAndToScore() {
     process.stdin.setRawMode(true);
     process.stdin.setEncoding("utf8");
-    process.stdin.on("data", (shoot) => {
-      if (shoot === "\u0003") {
-        // Ctrl+C が押された場合、ゲームを終了する
-        process.exit();
-      } else {
-        this.#toScore(shoot);
-      }
+
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        process.stdin.pause();
+        resolve();
+      }, this.#playTime);
+
+      process.stdin.on("data", (shoot) => {
+        if (shoot === "\u0003") {
+          // Ctrl+C が押された場合、ゲームを終了する
+          process.exit();
+        } else {
+          this.#toScore(shoot);
+        }
+      });
+
+      process.stdin.on("error", () => {
+        reject(new Error("入力中にエラーが発生しました。"));
+        process.stdin.pause();
+      });
     });
   }
 
   #toScore(shoot) {
+    const hittingWord = this.#hittingWords.join("");
     const targetWords = this.#fetchTargetWords();
     const judgement = new Judgment(targetWords);
-    const hittingWord = this.#hittingWords.join("");
     const isPerfectHit = judgement.isPerfectHit(shoot, hittingWord);
     const isHit = judgement.isHit(
       shoot,
@@ -67,8 +112,7 @@ export class Game {
       this.#consecutiveHitCount
     );
 
-    this.#giveScore(isPerfectHit, isHit);
-    this.#changeState(isHit, shoot);
+    this.#giveScoreAndChangeState(isPerfectHit, isHit, shoot);
   }
 
   #fetchTargetWords() {
@@ -80,33 +124,24 @@ export class Game {
     return targetWords;
   }
 
-  #giveScore(isPerfectHit, isHit) {
+  #giveScoreAndChangeState(isPerfectHit, isHit, shoot) {
     if (isPerfectHit) {
-      console.log("perfect hit!!");
       this.#score.addBonusPoint();
+      this.#resetState();
     } else if (isHit) {
-      console.log("hit!!!");
       this.#score.addNormalPoint();
+      this.#saveState(shoot);
     } else {
-      console.log("Miss");
+      this.#resetState();
     }
   }
-
-  #changeState(isHit, shoot) {
-    if (isHit) {
-      this.#save(shoot);
-    } else {
-      this.#reset();
-    }
-  }
-
-  #save(shoot) {
-    this.#hittingWords.push(shoot);
-    this.#consecutiveHitCount++;
-  }
-
-  #reset() {
+  #resetState() {
     this.#hittingWords = [];
     this.#consecutiveHitCount = 0;
+  }
+
+  #saveState(shoot) {
+    this.#hittingWords.push(shoot);
+    this.#consecutiveHitCount++;
   }
 }
