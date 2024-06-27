@@ -9,6 +9,7 @@ import {
 export class Target {
   #word;
   #endingTime;
+  #indent;
   #wordLists = {
     veryEasy: veryEasyWords,
     easy: easyWords,
@@ -23,10 +24,12 @@ export class Target {
     hard: { max: 6000, min: 3000 },
     veryHard: { max: 4000, min: 2000 },
   };
+  #maxIndent = 100;
 
   constructor(level) {
     this.#word = this.#setWord(level);
     this.#endingTime = this.#setEndingTime(level);
+    this.#indent = this.#buildRandomIndent();
   }
 
   get word() {
@@ -35,6 +38,10 @@ export class Target {
 
   get endingTime() {
     return this.#endingTime;
+  }
+
+  get indent() {
+    return this.#indent;
   }
 
   #setWord(level) {
@@ -51,5 +58,10 @@ export class Target {
 
   #addRandomTime(maxTime, minTime) {
     return Math.floor(Math.random() * (maxTime - minTime) + minTime);
+  }
+
+  #buildRandomIndent() {
+    const randomInt = Math.floor(Math.random() * this.#maxIndent);
+    return " ".repeat(randomInt);
   }
 }
