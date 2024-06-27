@@ -6,6 +6,6 @@ export class TimeManager {
   }
 
   isTimeOver() {
-    return Date.now() / 1000 > this.#time;
+    return Date.now() > this.#time;
   }
 }

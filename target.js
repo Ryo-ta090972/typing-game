@@ -17,11 +17,11 @@ export class Target {
     veryHard: veryHardWords,
   };
   #timeLists = {
-    veryEasy: { max: 12, min: 9 },
-    easy: { max: 10, min: 7 },
-    normal: { max: 8, min: 5 },
-    hard: { max: 6, min: 3 },
-    veryHard: { max: 4, min: 2 },
+    veryEasy: { max: 12000, min: 9000 },
+    easy: { max: 10000, min: 7000 },
+    normal: { max: 8000, min: 5000 },
+    hard: { max: 6000, min: 3000 },
+    veryHard: { max: 4000, min: 2000 },
   };
 
   constructor(level) {
@@ -46,10 +46,10 @@ export class Target {
   #setEndingTime(level) {
     const maxTime = this.#timeLists[level]["max"];
     const minTime = this.#timeLists[level]["min"];
-    return Date.now() / 1000 + this.#addRandomTime(maxTime, minTime);
+    return Date.now() + this.#addRandomTime(maxTime, minTime);
   }
 
   #addRandomTime(maxTime, minTime) {
-    return Math.random() * (maxTime - minTime) + minTime;
+    return Math.floor(Math.random() * (maxTime - minTime) + minTime);
   }
 }
