@@ -2,6 +2,7 @@ import { Score } from "./score.js";
 import { TargetsFactory } from "./targets_factory.js";
 import { Judgment } from "./judgement.js";
 import { TimeManager } from "./time_manager.js";
+import { GameScreen } from "./game_screen.js";
 
 export class Game {
   #targetsFactory;
@@ -11,6 +12,7 @@ export class Game {
   #consecutiveHitCount;
   #playTime;
   #endingTime;
+  #stagePoint;
 
   constructor(level) {
     this.#targetsFactory = new TargetsFactory(level);
@@ -18,8 +20,9 @@ export class Game {
     this.#score = new Score(level);
     this.#hittingWords = [];
     this.#consecutiveHitCount = 0;
-    this.#playTime = 3000;
+    this.#playTime = 100000;
     this.#endingTime = Date.now() + this.#playTime;
+    this.#stagePoint = 100;
   }
 
   async play() {
@@ -33,6 +36,7 @@ export class Game {
         this.#updateTargetsAndOutputGameScreen(),
         this.#acceptUserInputAndToScore(),
       ]);
+
       return this.#score.totalPoint;
     } catch (error) {
       if (error instanceof Error) {
@@ -50,7 +54,7 @@ export class Game {
     return new Promise((resolve) => {
       const interval = setInterval(() => {
         this.#targets = this.#targetsFactory.update(this.#targets);
-        this.#outputGameScreen();
+        this.#outputPlayScreen();
 
         if (timeManager.isTimeOver()) {
           clearInterval(interval);
@@ -60,19 +64,18 @@ export class Game {
     });
   }
 
-  #outputGameScreen() {
-    console.clear();
-    console.log(this.#score.totalPoint);
-    console.log(this.#hittingWords.join(""));
-    console.log(`現在の時間：${Date.now()}`);
-    console.log(`終了時間：${this.#endingTime}`);
-    console.log("");
+  #outputPlayScreen() {
+    const gameScreen = new GameScreen(
+      this.#score.totalPoint,
+      this.#stagePoint,
+      this.#endingTime,
+      this.#targets,
+      this.#hittingWords.join("")
+    );
 
-    this.#targets.forEach((target) => {
-      console.log(`出題単語：${target.word}`);
-      console.log(`切り替わる時間：${target.endingTime}`);
-      console.log("");
-    });
+    const playScreen = gameScreen.buildPlayScreen();
+    console.clear();
+    console.log(playScreen);
   }
 
   #acceptUserInputAndToScore() {
@@ -121,6 +124,7 @@ export class Game {
     this.#targets.forEach((target) => {
       targetWords.push(target.word);
     });
+
     return targetWords;
   }
 
@@ -135,6 +139,7 @@ export class Game {
       this.#resetState();
     }
   }
+
   #resetState() {
     this.#hittingWords = [];
     this.#consecutiveHitCount = 0;
