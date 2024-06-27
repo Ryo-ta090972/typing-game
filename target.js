@@ -46,12 +46,10 @@ export class Target {
   #setEndingTime(level) {
     const maxTime = this.#timeLists[level]["max"];
     const minTime = this.#timeLists[level]["min"];
-
-    const time = this.#getTime(maxTime, minTime);
-    return Date.now() / 1000 + time;
+    return Date.now() / 1000 + this.#addRandomTime(maxTime, minTime);
   }
 
-  #getTime(max, min) {
-    return Math.random() * (max - min) + min;
+  #addRandomTime(maxTime, minTime) {
+    return Math.random() * (maxTime - minTime) + minTime;
   }
 }

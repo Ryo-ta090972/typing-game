@@ -18,7 +18,7 @@ export class TargetsFactory {
     return targets;
   }
 
-  exchange(targets) {
+  update(targets) {
     const newTargets = [];
 
     targets.forEach((target) => {
