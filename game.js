@@ -1,6 +1,6 @@
 import { Score } from "./score.js";
 import { TargetsFactory } from "./targets_factory.js";
-import { Judgment } from "./judgement.js";
+import { Judgment } from "./judgment.js";
 import { TimeManager } from "./time_manager.js";
 import { GameScreen } from "./game_screen.js";
 
@@ -13,6 +13,7 @@ export class Game {
   #playTime;
   #endingTime;
   #stagePoint;
+  #perfectHitWords;
 
   constructor(level) {
     this.#targetsFactory = new TargetsFactory(level);
@@ -23,6 +24,7 @@ export class Game {
     this.#playTime = 100000;
     this.#endingTime = Date.now() + this.#playTime;
     this.#stagePoint = 100;
+    this.#perfectHitWords = [];
   }
 
   async play() {
@@ -53,7 +55,10 @@ export class Game {
 
     return new Promise((resolve) => {
       const interval = setInterval(() => {
-        this.#targets = this.#targetsFactory.update(this.#targets);
+        this.#targets = this.#targetsFactory.update(
+          this.#targets,
+          this.#perfectHitWords
+        );
         this.#outputPlayScreen();
 
         if (timeManager.isTimeOver()) {
@@ -111,7 +116,7 @@ export class Game {
     const isPerfectHit = judgement.isPerfectHit(shootingWord);
     const isHit = judgement.isHit(shootingWord, this.#consecutiveHitCount);
 
-    this.#giveScoreAndChangeState(isPerfectHit, isHit, shoot);
+    this.#giveScoreAndChangeState(isPerfectHit, isHit, shootingWord, shoot);
   }
 
   #fetchTargetWords() {
@@ -124,9 +129,10 @@ export class Game {
     return targetWords;
   }
 
-  #giveScoreAndChangeState(isPerfectHit, isHit, shoot) {
+  #giveScoreAndChangeState(isPerfectHit, isHit, shootingWord, shoot) {
     if (isPerfectHit) {
       this.#score.addBonusPoint();
+      this.#perfectHitWords.push(shootingWord);
       this.#resetState();
     } else if (isHit) {
       this.#score.addNormalPoint();
