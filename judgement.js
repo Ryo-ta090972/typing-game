@@ -5,15 +5,13 @@ export class Judgment {
     this.#words = words;
   }
 
-  isPerfectHit(shoot, hittingWord) {
-    const shootingWord = hittingWord.concat(shoot);
-    return this.#words.includes(shootingWord);
+  isPerfectHit(word) {
+    return this.#words.includes(word);
   }
 
-  isHit(shoot, hittingWord, consecutiveHitCount) {
-    const shootingWord = hittingWord.concat(shoot);
+  isHit(word, consecutiveHitCount) {
     const targetWords = this.#buildTargetWords(consecutiveHitCount);
-    return targetWords.includes(shootingWord);
+    return targetWords.includes(word);
   }
 
   #buildTargetWords(consecutiveHitCount) {

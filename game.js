@@ -105,15 +105,11 @@ export class Game {
   }
 
   #toScore(shoot) {
-    const hittingWord = this.#hittingWords.join("");
+    const shootingWord = this.#hittingWords.join("").concat(shoot);
     const targetWords = this.#fetchTargetWords();
     const judgement = new Judgment(targetWords);
-    const isPerfectHit = judgement.isPerfectHit(shoot, hittingWord);
-    const isHit = judgement.isHit(
-      shoot,
-      hittingWord,
-      this.#consecutiveHitCount
-    );
+    const isPerfectHit = judgement.isPerfectHit(shootingWord);
+    const isHit = judgement.isHit(shootingWord, this.#consecutiveHitCount);
 
     this.#giveScoreAndChangeState(isPerfectHit, isHit, shoot);
   }
