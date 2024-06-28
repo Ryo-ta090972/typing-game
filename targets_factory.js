@@ -1,3 +1,4 @@
+import { Judgment } from "./judgment.js";
 import { Target } from "./target.js";
 import { TimeManager } from "./time_manager.js";
 
@@ -18,18 +19,19 @@ export class TargetsFactory {
     return targets;
   }
 
-  update(targets, perfectHitWords) {
+  update(targets, hitWords) {
     const newTargets = [];
 
     targets.forEach((target) => {
-      const isPerfectHitWord = this.#isPerfectHitWord(target, perfectHitWords);
       const timeManager = new TimeManager(target.endingTime);
+      const judgment = new Judgment(hitWords);
+      const isHitWord = judgment.isHitWord(target.word);
       const newTarget = this.#createNewTarget({
         targets,
-        perfectHitWords,
+        hitWords,
       });
 
-      if (timeManager.isTimeOver() || isPerfectHitWord) {
+      if (timeManager.isTimeOver() || isHitWord) {
         newTargets.push(newTarget);
       } else {
         newTargets.push(target);
@@ -38,29 +40,30 @@ export class TargetsFactory {
     return newTargets;
   }
 
-  #createNewTarget({ targets, perfectHitWords = [] }) {
+  #createNewTarget({ targets, hitWords = [] }) {
     let newTarget = new Target(this.#level);
 
-    while (
-      this.#isSomeWord(newTarget, targets) ||
-      this.#isPerfectHitWord(newTarget, perfectHitWords)
-    ) {
+    while (this.#isSomeWordOrHitWord(newTarget, targets, hitWords)) {
       newTarget = new Target(this.#level);
     }
 
     return newTarget;
   }
 
-  #isSomeWord(newTarget, targets) {
+  #isSomeWordOrHitWord(newTarget, targets, hitWords) {
     const newWord = newTarget.word;
-    const targetWords = this.#getWords(targets);
-    const uniqueWords = new Set(targetWords);
-    return uniqueWords.size === uniqueWords.add(newWord).size;
+    const judgment = new Judgment(hitWords);
+    const isSomeWord = this.#isSomeWord(newWord, targets);
+    const isHitWord = judgment.isHitWord(newWord);
+
+    return isSomeWord || isHitWord;
   }
 
-  #isPerfectHitWord(target, perfectHitWords) {
+  #isSomeWord(target, targets) {
     const word = target.word;
-    return perfectHitWords.includes(word);
+    const targetWords = this.#getWords(targets);
+    const uniqueWords = new Set(targetWords);
+    return uniqueWords.size === uniqueWords.add(word).size;
   }
 
   #getWords(targets) {

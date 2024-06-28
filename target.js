@@ -8,7 +8,7 @@ import {
 
 export class Target {
   #word;
-  #endingTime;
+  #endTime;
   #indent;
   #wordLists = {
     veryEasy: veryEasyWords,
@@ -28,7 +28,7 @@ export class Target {
 
   constructor(level) {
     this.#word = this.#setWord(level);
-    this.#endingTime = this.#setEndingTime(level);
+    this.#endTime = this.#setEndTime(level);
     this.#indent = this.#buildRandomIndent();
   }
 
@@ -36,8 +36,8 @@ export class Target {
     return this.#word;
   }
 
-  get endingTime() {
-    return this.#endingTime;
+  get endTime() {
+    return this.#endTime;
   }
 
   get indent() {
@@ -50,7 +50,7 @@ export class Target {
     return words[randomIndex];
   }
 
-  #setEndingTime(level) {
+  #setEndTime(level) {
     const maxTime = this.#timeLists[level]["max"];
     const minTime = this.#timeLists[level]["min"];
     return Date.now() + this.#addRandomTime(maxTime, minTime);

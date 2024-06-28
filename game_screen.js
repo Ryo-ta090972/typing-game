@@ -1,16 +1,16 @@
 export class GameScreen {
   #earnedPoint;
-  #stagePoint;
-  #endingTime;
+  #pointToWin;
+  #endTime;
   #targets;
-  #hittingWord;
+  #consecutiveHitChar;
 
-  constructor(earnedPoint, stagePoint, endingTime, targets, hittingWord) {
+  constructor(earnedPoint, pointToWin, endTime, targets, consecutiveHitChar) {
     this.#earnedPoint = earnedPoint;
-    this.#stagePoint = stagePoint;
-    this.#endingTime = endingTime;
+    this.#pointToWin = pointToWin;
+    this.#endTime = endTime;
     this.#targets = targets;
-    this.#hittingWord = hittingWord;
+    this.#consecutiveHitChar = consecutiveHitChar;
   }
 
   buildPlayScreen() {
@@ -38,18 +38,17 @@ export class GameScreen {
     const body = [];
 
     this.#targets.forEach((target) => {
-      const regex = new RegExp(`^${this.#hittingWord}`);
+      const regex = new RegExp(`^${this.#consecutiveHitChar}`);
       const remainingWord = target.word.replace(regex, "");
       const word = target.indent + remainingWord;
-      body.push(word);
-      body.push("");
+      body.push(word, "");
     });
 
     return body.join("\n");
   }
 
   #remainingPoint() {
-    const remainingPoint = this.#stagePoint - this.#earnedPoint;
+    const remainingPoint = this.#pointToWin - this.#earnedPoint;
 
     if (remainingPoint > 0) {
       return remainingPoint;
@@ -59,7 +58,7 @@ export class GameScreen {
   }
 
   #remainingTime() {
-    const remainingTime = Math.floor((this.#endingTime - Date.now()) / 1000);
+    const remainingTime = Math.floor((this.#endTime - Date.now()) / 1000);
 
     if (remainingTime > 0) {
       return remainingTime;
