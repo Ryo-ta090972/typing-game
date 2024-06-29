@@ -23,7 +23,7 @@
 
 import { Game } from "./game.js";
 
-const round1 = new Game("easy");
+const round1 = new Game({ level: "easy", playTime: 10000, pointToWin: 100 });
 const round1Score = await round1.play();
 console.log("ゲーム終了");
 console.log(round1Score);
