@@ -16,6 +16,7 @@ export class TargetsFactory {
       const newTarget = this.#createNewTarget({ targets });
       targets.push(newTarget);
     }
+
     return targets;
   }
 
@@ -23,7 +24,7 @@ export class TargetsFactory {
     const newTargets = [];
 
     targets.forEach((target) => {
-      const timeManager = new TimeManager(target.endingTime);
+      const timeManager = new TimeManager(target.endTime);
       const judgment = new Judgment(hitWords);
       const isHitWord = judgment.isHitWord(target.word);
       const newTarget = this.#createNewTarget({
@@ -37,6 +38,7 @@ export class TargetsFactory {
         newTargets.push(target);
       }
     });
+
     return newTargets;
   }
 
@@ -52,18 +54,16 @@ export class TargetsFactory {
 
   #isSomeWordOrHitWord(newTarget, targets, hitWords) {
     const newWord = newTarget.word;
-    const judgment = new Judgment(hitWords);
     const isSomeWord = this.#isSomeWord(newWord, targets);
+    const judgment = new Judgment(hitWords);
     const isHitWord = judgment.isHitWord(newWord);
-
     return isSomeWord || isHitWord;
   }
 
-  #isSomeWord(target, targets) {
-    const word = target.word;
+  #isSomeWord(newWord, targets) {
     const targetWords = this.#getWords(targets);
     const uniqueWords = new Set(targetWords);
-    return uniqueWords.size === uniqueWords.add(word).size;
+    return uniqueWords.size === uniqueWords.add(newWord).size;
   }
 
   #getWords(targets) {
@@ -72,6 +72,7 @@ export class TargetsFactory {
     targets.forEach((target) => {
       words.push(target.word);
     });
+
     return words;
   }
 }
