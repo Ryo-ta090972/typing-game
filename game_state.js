@@ -11,12 +11,12 @@ export class GameState {
   #hitWords;
   #isGameWon = false;
 
-  constructor({ level, targets, scoreNeededToWin }) {
+  constructor(level, targets) {
     this.#score = new Score(level);
     this.#targets = targets;
-    this.#playTime = 30000;
+    this.#playTime = 60000;
     this.#endTime = Date.now() + this.#playTime;
-    this.#scoreNeededToWin = scoreNeededToWin;
+    this.#scoreNeededToWin = 300;
     this.#consecutiveHitCount = 0;
     this.#consecutiveHitChars = [];
     this.#hitWords = [];
@@ -76,8 +76,8 @@ export class GameState {
     this.#score.addNormalPoint();
   }
 
-  addBonusPoint() {
-    this.#score.addBonusPoint();
+  addBonusPoint(word) {
+    this.#score.addBonusPoint(word);
   }
 
   addConsecutiveHitCount() {

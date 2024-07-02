@@ -3,11 +3,11 @@ export class Score {
   #normalPoint;
   #bonusPoint;
   #pointLists = {
-    veryEasy: { normal: 2, bonus: 10 },
-    easy: { normal: 2, bonus: 8 },
-    normal: { normal: 1, bonus: 6 },
-    hard: { normal: 0, bonus: 6 },
-    veryHard: { normal: 0, bonus: 4 },
+    veryEasy: { normal: 2, bonus: 4 },
+    easy: { normal: 1, bonus: 3 },
+    normal: { normal: 1, bonus: 2 },
+    hard: { normal: 0, bonus: 1.5 },
+    veryHard: { normal: 0, bonus: 1 },
   };
 
   constructor(level) {
@@ -25,8 +25,8 @@ export class Score {
     this.#normalPoint += point;
   }
 
-  addBonusPoint() {
-    const point = this.#pointLists[this.#level]["bonus"];
-    this.#bonusPoint += point;
+  addBonusPoint(word) {
+    const bonusRate = this.#pointLists[this.#level]["bonus"];
+    this.#bonusPoint += word.length * bonusRate;
   }
 }

@@ -10,14 +10,10 @@ export class Game {
   #gameState;
   #player;
 
-  constructor({ level, scoreNeededToWin }) {
+  constructor(level) {
     this.#targetsFactory = new TargetsFactory(level);
     const targets = this.#targetsFactory.generate();
-    this.#gameState = new GameState({
-      level,
-      targets,
-      scoreNeededToWin,
-    });
+    this.#gameState = new GameState(level, targets);
     const require = createRequire(import.meta.url);
     this.#player = require("play-sound")();
   }
@@ -135,7 +131,7 @@ export class Game {
 
   #handleHitWord(word) {
     this.#player.play("hit.mp3");
-    this.#gameState.addBonusPoint();
+    this.#gameState.addBonusPoint(word);
     this.#gameState.addHitWords(word);
     this.#resetHitCountAndHitChars();
   }

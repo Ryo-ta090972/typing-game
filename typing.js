@@ -9,7 +9,7 @@ const questions = [
     type: "select",
     name: "gameLevel",
     message: "ゲームの難易度を選択してください。",
-    choices: ["easy", "normal", "hard", "very hard"],
+    choices: ["veryEasy", "easy", "normal", "hard", "veryHard"],
   },
 ];
 

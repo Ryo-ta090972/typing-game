@@ -1,28 +1,22 @@
-import {
-  veryEasyWords,
-  easyWords,
-  normalWords,
-  hardWords,
-  veryHardWords,
-} from "./word.js";
+import { easyWords, normalWords, hardWords } from "./word.js";
 
 export class Target {
   #word;
   #endTime;
   #indent;
   #wordLists = {
-    veryEasy: veryEasyWords,
+    veryEasy: easyWords,
     easy: easyWords,
     normal: normalWords,
     hard: hardWords,
-    veryHard: veryHardWords,
+    veryHard: hardWords,
   };
   #timeLists = {
     veryEasy: { max: 12000, min: 9000 },
     easy: { max: 10000, min: 7000 },
     normal: { max: 8000, min: 5000 },
-    hard: { max: 6000, min: 3000 },
-    veryHard: { max: 4000, min: 2000 },
+    hard: { max: 8000, min: 5000 },
+    veryHard: { max: 7000, min: 4000 },
   };
   #maxIndent = 100;
 
