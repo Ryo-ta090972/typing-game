@@ -1,29 +1,35 @@
 #!/usr/bin/env node
 
-// ゲームの難易度を設定する
-// import enquirer from "enquirer";
-// const { prompt } = enquirer;
-
-// const questions = [
-//   {
-//     type: "select",
-//     name: "level",
-//     message: "ゲームの難易度を選択してください。",
-//     choices: ["easy", "normal", "hard", "very hard"],
-//   },
-//   {
-//     type: "select",
-//     name: "start",
-//     message: "ゲームを開始しますか？",
-//     choices: ["start!", "back"],
-//   },
-// ];
-
-// await prompt(questions);
-
+import enquirer from "enquirer";
 import { Game } from "./game.js";
 
-const round1 = new Game({ level: "easy", playTime: 10000, pointToWin: 100 });
-const round1Score = await round1.play();
-console.log("ゲーム終了");
-console.log(round1Score);
+const { prompt } = enquirer;
+const questions = [
+  {
+    type: "select",
+    name: "gameLevel",
+    message: "ゲームの難易度を選択してください。",
+    choices: ["easy", "normal", "hard", "very hard"],
+  },
+];
+
+function outputGameResult(result) {
+  console.clear();
+
+  if (result.isGameWon) {
+    console.log("素晴らしい！ゲームクリア！");
+    console.log(`あなたの得点は${result.score}です！`);
+  } else {
+    console.log("ゲームオーバー。もっと頑張りましょう！");
+    console.log(`あなたの得点は${result.score}です。`);
+  }
+}
+
+async function main() {
+  const answer = await prompt(questions);
+  const game = new Game(answer.gameLevel);
+  const gameResult = await game.play();
+  outputGameResult(gameResult);
+}
+
+main();
