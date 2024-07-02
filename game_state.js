@@ -5,17 +5,18 @@ export class GameState {
   #targets;
   #playTime;
   #endTime;
-  #pointToWin;
+  #scoreNeededToWin;
   #consecutiveHitCount;
   #consecutiveHitChars;
   #hitWords;
+  #isGameWon = false;
 
-  constructor({ level, targets, playTime, pointToWin }) {
+  constructor({ level, targets, scoreNeededToWin }) {
     this.#score = new Score(level);
     this.#targets = targets;
-    this.#playTime = playTime;
+    this.#playTime = 30000;
     this.#endTime = Date.now() + this.#playTime;
-    this.#pointToWin = pointToWin;
+    this.#scoreNeededToWin = scoreNeededToWin;
     this.#consecutiveHitCount = 0;
     this.#consecutiveHitChars = [];
     this.#hitWords = [];
@@ -47,8 +48,8 @@ export class GameState {
     return this.#endTime;
   }
 
-  get pointToWin() {
-    return this.#pointToWin;
+  get scoreNeededToWin() {
+    return this.#scoreNeededToWin;
   }
 
   get consecutiveHitCount() {
@@ -61,6 +62,10 @@ export class GameState {
 
   get hitWords() {
     return this.#hitWords;
+  }
+
+  get isGameWon() {
+    return this.#isGameWon;
   }
 
   set targets(targets) {
@@ -93,5 +98,9 @@ export class GameState {
 
   resetConsecutiveHitChars() {
     this.#consecutiveHitChars = [];
+  }
+
+  winGame() {
+    this.#isGameWon = true;
   }
 }

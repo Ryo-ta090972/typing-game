@@ -3,20 +3,29 @@ import { GameState } from "./game_state.js";
 import { Judgment } from "./judgment.js";
 import { TimeManager } from "./time_manager.js";
 import { GameScreen } from "./game_screen.js";
+import { createRequire } from "module";
 
 export class Game {
   #targetsFactory;
   #gameState;
+  #player;
 
-  constructor({ level, playTime, pointToWin }) {
+  constructor({ level, scoreNeededToWin }) {
     this.#targetsFactory = new TargetsFactory(level);
     const targets = this.#targetsFactory.generate();
-    this.#gameState = new GameState({ level, targets, playTime, pointToWin });
+    this.#gameState = new GameState({
+      level,
+      targets,
+      scoreNeededToWin,
+    });
+    const require = createRequire(import.meta.url);
+    this.#player = require("play-sound")();
   }
 
   async play() {
     await this.#startTyping();
-    return this.#gameState.score;
+    this.#winGameIfScoreOver();
+    return this.#gameState;
   }
 
   async #startTyping() {
@@ -57,7 +66,7 @@ export class Game {
   #outputPlayScreen() {
     const gameScreen = new GameScreen(
       this.#gameState.score,
-      this.#gameState.pointToWin,
+      this.#gameState.scoreNeededToWin,
       this.#gameState.endTime,
       this.#gameState.targets,
       this.#gameState.hitString
@@ -78,6 +87,7 @@ export class Game {
   #acceptUserInputAndToScore() {
     process.stdin.setRawMode(true);
     process.stdin.setEncoding("utf8");
+    process.stdin.resume();
 
     return new Promise((resolve, reject) => {
       this.#endUserInputIfTimeOut(resolve);
@@ -87,7 +97,7 @@ export class Game {
           // Ctrl+C が押された場合、ゲームを終了する
           process.exit();
         } else {
-          this.#toScore(char);
+          this.#toScoreAndPlaySoundAndUpdateState(char);
         }
       });
 
@@ -105,7 +115,7 @@ export class Game {
     }, this.#gameState.playTime);
   }
 
-  #toScore(char) {
+  #toScoreAndPlaySoundAndUpdateState(char) {
     const hitCheckString = this.#gameState.hitString.concat(char);
     const judgment = new Judgment(this.#gameState.targetWords);
     const isHitWord = judgment.isHitWord(hitCheckString);
@@ -114,25 +124,31 @@ export class Game {
       this.#gameState.consecutiveHitCount
     );
 
-    this.#addPointAndUpdateGameState(
-      isHitWord,
-      isHitString,
-      hitCheckString,
-      char
-    );
+    if (isHitWord) {
+      this.#handleHitWord(hitCheckString);
+    } else if (isHitString) {
+      this.#handleHitString(char);
+    } else {
+      this.#handleMiss();
+    }
   }
 
-  #addPointAndUpdateGameState(isHitWord, isHitString, word, char) {
-    if (isHitWord) {
-      this.#gameState.addBonusPoint();
-      this.#gameState.addHitWords(word);
-      this.#resetHitCountAndHitChars();
-    } else if (isHitString) {
-      this.#gameState.addNormalPoint();
-      this.#addHitCountAndHitChars(char);
-    } else {
-      this.#resetHitCountAndHitChars();
-    }
+  #handleHitWord(word) {
+    this.#player.play("hit.mp3");
+    this.#gameState.addBonusPoint();
+    this.#gameState.addHitWords(word);
+    this.#resetHitCountAndHitChars();
+  }
+
+  #handleHitString(char) {
+    this.#player.play("hit.mp3");
+    this.#gameState.addNormalPoint();
+    this.#addHitCountAndHitChars(char);
+  }
+
+  #handleMiss() {
+    this.#player.play("miss.mp3");
+    this.#resetHitCountAndHitChars();
   }
 
   #resetHitCountAndHitChars() {
@@ -143,5 +159,11 @@ export class Game {
   #addHitCountAndHitChars(char) {
     this.#gameState.addConsecutiveHitCount();
     this.#gameState.addConsecutiveHitChars(char);
+  }
+
+  #winGameIfScoreOver() {
+    if (this.#gameState.score > this.#gameState.scoreNeededToWin) {
+      this.#gameState.winGame();
+    }
   }
 }
