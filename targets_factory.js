@@ -1,5 +1,5 @@
-import { Judgment } from "./judgment.js";
 import { Target } from "./target.js";
+import { Judgment } from "./judgment.js";
 import { TimeManager } from "./time_manager.js";
 
 export class TargetsFactory {
@@ -22,10 +22,10 @@ export class TargetsFactory {
 
   update(targets, hitWords) {
     const newTargets = [];
+    const judgment = new Judgment(hitWords);
 
     targets.forEach((target) => {
       const timeManager = new TimeManager(target.endTime);
-      const judgment = new Judgment(hitWords);
       const isHitWord = judgment.isHitWord(target.word);
       const newTarget = this.#createNewTarget({
         targets,
@@ -44,26 +44,26 @@ export class TargetsFactory {
 
   #createNewTarget({ targets, hitWords = [] }) {
     let newTarget = new Target(this.#level);
+    const words = this.#getWords(targets);
+    const judgment = new Judgment(hitWords);
 
-    while (this.#isSomeWordOrHitWord(newTarget, targets, hitWords)) {
+    while (this.#isDuplicateWord(newTarget, words, judgment)) {
       newTarget = new Target(this.#level);
     }
 
     return newTarget;
   }
 
-  #isSomeWordOrHitWord(newTarget, targets, hitWords) {
+  #isDuplicateWord(newTarget, words, judgment) {
     const newWord = newTarget.word;
-    const isSomeWord = this.#isSomeWord(newWord, targets);
-    const judgment = new Judgment(hitWords);
+    const isSomeWord = this.#isSomeWord(newWord, words);
     const isHitWord = judgment.isHitWord(newWord);
     return isSomeWord || isHitWord;
   }
 
-  #isSomeWord(newWord, targets) {
-    const targetWords = this.#getWords(targets);
-    const uniqueWords = new Set(targetWords);
-    return uniqueWords.size === uniqueWords.add(newWord).size;
+  #isSomeWord(newWord, words) {
+    const newWords = new Set(words).add(newWord);
+    return words.size === newWords.size;
   }
 
   #getWords(targets) {
