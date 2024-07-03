@@ -3,23 +3,17 @@ import { Score } from "./score.js";
 export class GameState {
   #score;
   #targets;
-  #playTime;
-  #endTime;
-  #scoreNeededToWin;
-  #consecutiveHitCount;
-  #consecutiveHitChars;
-  #hitWords;
+  #playTime = 60000;
+  #endTime = Date.now() + this.#playTime;
+  #scoreNeededToWin = 300;
+  #consecutiveHitCount = 0;
+  #consecutiveHitChars = [];
+  #hitWords = [];
   #isGameWon = false;
 
   constructor(level, targets) {
     this.#score = new Score(level);
     this.#targets = targets;
-    this.#playTime = 60000;
-    this.#endTime = Date.now() + this.#playTime;
-    this.#scoreNeededToWin = 300;
-    this.#consecutiveHitCount = 0;
-    this.#consecutiveHitChars = [];
-    this.#hitWords = [];
   }
 
   get score() {
