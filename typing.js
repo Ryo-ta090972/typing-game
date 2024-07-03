@@ -2,6 +2,7 @@
 
 import enquirer from "enquirer";
 import { Game } from "./game.js";
+import { GameScreen } from "./game_screen.js";
 
 const { prompt } = enquirer;
 const questions = [
@@ -13,23 +14,13 @@ const questions = [
   },
 ];
 
-function outputGameResult(result) {
-  console.clear();
-
-  if (result.isGameWon) {
-    console.log("素晴らしい！ゲームクリア！");
-    console.log(`あなたの得点は${result.score}です！`);
-  } else {
-    console.log("ゲームオーバー。もっと頑張りましょう！");
-    console.log(`あなたの得点は${result.score}です。`);
-  }
-}
-
 async function main() {
   const answer = await prompt(questions);
   const game = new Game(answer.gameLevel);
   const gameResult = await game.play();
-  outputGameResult(gameResult);
+  const gameScreen = new GameScreen(gameResult);
+  const endScreen = gameScreen.buildEndScreen();
+  console.log(endScreen);
 }
 
 main();

@@ -60,14 +60,7 @@ export class Game {
   }
 
   #outputPlayScreen() {
-    const gameScreen = new GameScreen(
-      this.#gameState.score,
-      this.#gameState.scoreNeededToWin,
-      this.#gameState.endTime,
-      this.#gameState.targets,
-      this.#gameState.hitString
-    );
-
+    const gameScreen = new GameScreen(this.#gameState);
     const playScreen = gameScreen.buildPlayScreen();
     console.clear();
     console.log(playScreen);

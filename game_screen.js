@@ -1,16 +1,8 @@
 export class GameScreen {
-  #earnedPoint;
-  #pointToWin;
-  #endTime;
-  #targets;
-  #consecutiveHitChar;
+  #gameState;
 
-  constructor(earnedPoint, pointToWin, endTime, targets, consecutiveHitChar) {
-    this.#earnedPoint = earnedPoint;
-    this.#pointToWin = pointToWin;
-    this.#endTime = endTime;
-    this.#targets = targets;
-    this.#consecutiveHitChar = consecutiveHitChar;
+  constructor(gameState) {
+    this.#gameState = gameState;
   }
 
   buildPlayScreen() {
@@ -22,11 +14,29 @@ export class GameScreen {
     return playScreen.join("\n");
   }
 
+  buildEndScreen() {
+    const endScreen = [];
+
+    if (this.#gameState.isGameWon) {
+      endScreen.push(
+        "ゲームクリア！",
+        `あなたのスコアは ${this.#gameState.score} 点です。`
+      );
+    } else {
+      endScreen.push(
+        "ゲームオーバー！",
+        `あなたのスコアは ${this.#gameState.score} 点です。`
+      );
+    }
+
+    return endScreen.join("\n");
+  }
+
   #buildHeader() {
     const header = [];
     header.push(
-      `ステージクリアまであと ${this.#remainingPoint()} ポイント必要です。`,
-      `獲得ポイント：${this.#earnedPoint}`,
+      `ゲームクリアまであと ${this.#remainingPoint()} ポイント必要です。`,
+      `獲得ポイント：${this.#gameState.score}`,
       `残り時間：${this.#remainingTime()}`,
       ""
     );
@@ -37,8 +47,8 @@ export class GameScreen {
   #buildBody() {
     const body = [];
 
-    this.#targets.forEach((target) => {
-      const regex = new RegExp(`^${this.#consecutiveHitChar}`);
+    this.#gameState.targets.forEach((target) => {
+      const regex = new RegExp(`^${this.#gameState.hitString}`);
       const remainingWord = target.word.replace(regex, "");
       const word = target.indent + remainingWord;
       body.push(word, "");
@@ -48,7 +58,8 @@ export class GameScreen {
   }
 
   #remainingPoint() {
-    const remainingPoint = this.#pointToWin - this.#earnedPoint;
+    const remainingPoint =
+      this.#gameState.scoreNeededToWin - this.#gameState.score;
 
     if (remainingPoint > 0) {
       return remainingPoint;
@@ -58,7 +69,9 @@ export class GameScreen {
   }
 
   #remainingTime() {
-    const remainingTime = Math.floor((this.#endTime - Date.now()) / 1000);
+    const remainingTime = Math.floor(
+      (this.#gameState.endTime - Date.now()) / 1000
+    );
 
     if (remainingTime > 0) {
       return remainingTime;
