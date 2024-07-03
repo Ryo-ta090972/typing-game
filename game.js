@@ -1,3 +1,4 @@
+import path from "path";
 import { createRequire } from "module";
 import { TargetsFactory } from "./targets_factory.js";
 import { GameState } from "./game_state.js";
@@ -123,20 +124,23 @@ export class Game {
   }
 
   #handleHitWord(word) {
+    const soundPath = this.#searchSoundPath("hit.mp3")
     this.#gameState.addBonusPoint(word);
-    this.#soundPlayer.play("hit.mp3");
+    this.#soundPlayer.play(soundPath);
     this.#gameState.addHitWords(word);
     this.#resetHitCountAndHitChars();
   }
 
   #handleHitString(char) {
+    const soundPath = this.#searchSoundPath("hit.mp3")
     this.#gameState.addNormalPoint();
-    this.#soundPlayer.play("hit.mp3");
+    this.#soundPlayer.play(soundPath);
     this.#addHitCountAndHitChars(char);
   }
 
   #handleMiss() {
-    this.#soundPlayer.play("miss.mp3");
+    const soundPath = this.#searchSoundPath("miss.mp3")
+    this.#soundPlayer.play(soundPath);
     this.#resetHitCountAndHitChars();
   }
 
@@ -154,5 +158,10 @@ export class Game {
     if (this.#gameState.score > this.#gameState.scoreNeededToWin) {
       this.#gameState.winGame();
     }
+  }
+
+  #searchSoundPath(soundName) {
+    const dirName = import.meta.dirname;
+    return path.join(dirName, soundName);
   }
 }
