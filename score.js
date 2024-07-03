@@ -1,7 +1,7 @@
 export class Score {
   #level;
-  #normalPoint;
-  #bonusPoint;
+  #normalPoint = 0;
+  #bonusPoint = 0;
   #pointLists = {
     veryEasy: { normal: 2, bonus: 4 },
     easy: { normal: 1, bonus: 3 },
@@ -12,8 +12,6 @@ export class Score {
 
   constructor(level) {
     this.#level = level;
-    this.#normalPoint = 0;
-    this.#bonusPoint = 0;
   }
 
   get totalPoint() {
