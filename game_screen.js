@@ -20,12 +20,12 @@ export class GameScreen {
     if (this.#gameState.isGameWon) {
       endScreen.push(
         "ゲームクリア！",
-        `あなたのスコアは ${this.#gameState.score} 点です。`
+        `あなたのスコアは ${this.#gameState.score} 点です。`,
       );
     } else {
       endScreen.push(
         "ゲームオーバー！",
-        `あなたのスコアは ${this.#gameState.score} 点です。`
+        `あなたのスコアは ${this.#gameState.score} 点です。`,
       );
     }
 
@@ -35,10 +35,10 @@ export class GameScreen {
   #buildHeader() {
     const header = [];
     header.push(
-      `ゲームクリアまであと ${this.#remainingPoint()} ポイント必要です。`,
-      `獲得ポイント：${this.#gameState.score}`,
-      `残り時間：${this.#remainingTime()}`,
-      ""
+      `ゲームクリアまであと ${this.#remainingPoint()} 点必要です。`,
+      `スコア：${this.#gameState.score} 点`,
+      `残り時間：${this.#remainingTime()} 秒`,
+      "",
     );
 
     return header.join("\n");
@@ -70,7 +70,7 @@ export class GameScreen {
 
   #remainingTime() {
     const remainingTime = Math.floor(
-      (this.#gameState.endTime - Date.now()) / 1000
+      (this.#gameState.endTime - Date.now()) / 1000,
     );
 
     if (remainingTime > 0) {
