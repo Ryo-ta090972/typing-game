@@ -124,7 +124,7 @@ export class Game {
   }
 
   #handleHitWord(word) {
-    const soundPath = this.#searchSoundPath("hit.mp3")
+    const soundPath = this.#searchSoundPath("hit.mp3");
     this.#gameState.addBonusPoint(word);
     this.#soundPlayer.play(soundPath);
     this.#gameState.addHitWords(word);
@@ -132,14 +132,14 @@ export class Game {
   }
 
   #handleHitString(char) {
-    const soundPath = this.#searchSoundPath("hit.mp3")
+    const soundPath = this.#searchSoundPath("hit.mp3");
     this.#gameState.addNormalPoint();
     this.#soundPlayer.play(soundPath);
     this.#addHitCountAndHitChars(char);
   }
 
   #handleMiss() {
-    const soundPath = this.#searchSoundPath("miss.mp3")
+    const soundPath = this.#searchSoundPath("miss.mp3");
     this.#soundPlayer.play(soundPath);
     this.#resetHitCountAndHitChars();
   }
@@ -161,7 +161,7 @@ export class Game {
   }
 
   #searchSoundPath(soundName) {
-    const dirName = import.meta.dirname;
-    return path.join(dirName, soundName);
+    const dirPath = import.meta.dirname;
+    return path.join(dirPath, soundName);
   }
 }
