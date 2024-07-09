@@ -1,4 +1,5 @@
 import path from "path";
+import { fileURLToPath } from "url";
 import { createRequire } from "module";
 import { TargetsFactory } from "./targets_factory.js";
 import { GameState } from "./game_state.js";
@@ -161,7 +162,8 @@ export class Game {
   }
 
   #searchSoundPath(soundName) {
-    const dirPath = import.meta.dirname;
+    const filePath = fileURLToPath(import.meta.url);
+    const dirPath = path.dirname(filePath);
     return path.join(dirPath, soundName);
   }
 }
