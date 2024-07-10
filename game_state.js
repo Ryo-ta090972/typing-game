@@ -1,6 +1,5 @@
 import { Score } from "./score.js";
 import { TargetsFactory } from "./targets_factory.js";
-import { TimeManager } from "./time_manager.js";
 
 export class GameState {
   #level;
@@ -136,8 +135,7 @@ export class GameState {
   }
 
   #isTimeOverOrHitWord(endTime, word) {
-    const timeManager = new TimeManager(endTime);
     const isHitWord = this.#hitWords.includes(word);
-    return timeManager.isTimeOver() || isHitWord;
+    return Date.now() > endTime || isHitWord;
   }
 }

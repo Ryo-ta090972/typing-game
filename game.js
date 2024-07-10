@@ -3,7 +3,6 @@ import { fileURLToPath } from "url";
 import { createRequire } from "module";
 import { TargetsFactory } from "./targets_factory.js";
 import { GameState } from "./game_state.js";
-import { TimeManager } from "./time_manager.js";
 import { GameScreen } from "./game_screen.js";
 
 export class Game {
@@ -60,9 +59,7 @@ export class Game {
   }
 
   #endIntervalIfTimeOver(interval, resolve) {
-    const timeManager = new TimeManager(this.#gameState.endTime);
-
-    if (timeManager.isTimeOver()) {
+    if (Date.now() > this.#gameState.endTime) {
       clearInterval(interval);
       resolve();
     }
