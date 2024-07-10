@@ -37,7 +37,8 @@ export class TargetsFactory {
   }
 
   #isSomeWord(newWord, words) {
-    const newWords = new Set(words).add(newWord);
-    return words.size === newWords.size;
+    const uniqueWords = new Set(words);
+    uniqueWords.add(newWord);
+    return words.length === uniqueWords.size;
   }
 }
