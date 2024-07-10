@@ -20,7 +20,7 @@ export class TargetsFactory {
 
   createNewTarget({ targets, hitWords = [] }) {
     let newTarget = new Target(this.#level);
-    const words = this.#getWords(targets);
+    const words = targets.map((target) => target.word);
 
     while (this.#isDuplicateWord(newTarget, words, hitWords)) {
       newTarget = new Target(this.#level);
@@ -39,15 +39,5 @@ export class TargetsFactory {
   #isSomeWord(newWord, words) {
     const newWords = new Set(words).add(newWord);
     return words.size === newWords.size;
-  }
-
-  #getWords(targets) {
-    const words = [];
-
-    targets.forEach((target) => {
-      words.push(target.word);
-    });
-
-    return words;
   }
 }

@@ -28,13 +28,7 @@ export class GameState {
   }
 
   get targetWords() {
-    const targetWords = [];
-
-    this.#targets.forEach((target) => {
-      targetWords.push(target.word);
-    });
-
-    return targetWords;
+    return this.#targets.map((target) => target.word);
   }
 
   get playTime() {

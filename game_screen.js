@@ -6,66 +6,54 @@ export class GameScreen {
   }
 
   buildPlayScreen() {
-    const playScreen = [];
     const header = this.#buildHeader();
     const body = this.#buildBody();
-
-    playScreen.push(header, body);
+    const playScreen = [header, body];
     return playScreen.join("\n");
   }
 
   buildEndScreen() {
-    const endScreen = [];
+    const gameClearScreen = [
+      "ゲームクリア！",
+      `あなたのスコアは ${this.#gameState.score} 点です。`,
+    ];
 
-    if (this.#gameState.isGameWon) {
-      endScreen.push(
-        "ゲームクリア！",
-        `あなたのスコアは ${this.#gameState.score} 点です。`,
-      );
-    } else {
-      endScreen.push(
-        "ゲームオーバー！",
-        `あなたのスコアは ${this.#gameState.score} 点です。`,
-      );
-    }
+    const gameOverScreen = [
+      "ゲームオーバー！",
+      `あなたのスコアは ${this.#gameState.score} 点です。`,
+    ];
 
-    return endScreen.join("\n");
+    return this.#gameState.isGameWon
+      ? gameClearScreen.join("\n")
+      : gameOverScreen.join("\n");
   }
 
   #buildHeader() {
-    const header = [];
-    header.push(
+    const header = [
       `ゲームクリアまであと ${this.#remainingPoint()} 点必要です。`,
       `スコア：${this.#gameState.score} 点`,
       `残り時間：${this.#remainingTime()} 秒`,
       "",
-    );
+    ];
 
     return header.join("\n");
   }
 
   #buildBody() {
-    const body = [];
-
-    this.#gameState.targets.forEach((target) => {
+    const body = this.#gameState.targets.map((target) => {
       const regex = new RegExp(`^${this.#gameState.hitString}`);
       const remainingWord = target.word.replace(regex, "");
-      const word = target.indent + remainingWord;
-      body.push(word, "");
+      return target.indent + remainingWord;
     });
 
-    return body.join("\n");
+    return body.join("\n\n");
   }
 
   #remainingPoint() {
     const remainingPoint =
       this.#gameState.scoreNeededToWin - this.#gameState.score;
 
-    if (remainingPoint > 0) {
-      return remainingPoint;
-    } else {
-      return 0;
-    }
+    return remainingPoint > 0 ? remainingPoint : 0;
   }
 
   #remainingTime() {
@@ -73,10 +61,6 @@ export class GameScreen {
       (this.#gameState.endTime - Date.now()) / 1000,
     );
 
-    if (remainingTime > 0) {
-      return remainingTime;
-    } else {
-      return 0;
-    }
+    return remainingTime > 0 ? remainingTime : 0;
   }
 }
