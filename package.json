@@ -1,6 +1,6 @@
 {
-  "name": "typing_game",
-  "version": "1.0.0",
+  "name": "typing-game",
+  "version": "1.0.4",
   "description": "## 概要",
   "main": "typing.js",
   "scripts": {
