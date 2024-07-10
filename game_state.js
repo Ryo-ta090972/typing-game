@@ -2,7 +2,8 @@ import { Score } from "./score.js";
 import { TargetsFactory } from "./targets_factory.js";
 
 export class GameState {
-  #level;
+  #wordList;
+  #endTimeList;
   #score;
   #targets;
   #playTime = 60000;
@@ -13,9 +14,10 @@ export class GameState {
   #hitWords = [];
   #isGameWon = false;
 
-  constructor(level, targets) {
-    this.#level = level;
-    this.#score = new Score(level);
+  constructor(wordList, endTimeList, pointList, targets) {
+    this.#wordList = wordList;
+    this.#endTimeList = endTimeList;
+    this.#score = new Score(pointList);
     this.#targets = targets;
   }
 
@@ -113,7 +115,11 @@ export class GameState {
   }
 
   #createNewTargets() {
-    const targetsFactory = new TargetsFactory(this.#level);
+    const targetsFactory = new TargetsFactory(
+      this.#wordList,
+      this.#endTimeList,
+    );
+
     const newTargets = this.#targets.map((target) => {
       const newTarget = targetsFactory.createNewTarget({
         targets: this.#targets,

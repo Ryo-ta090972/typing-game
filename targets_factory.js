@@ -1,14 +1,16 @@
 import { Target } from "./target.js";
 
 export class TargetsFactory {
-  #level;
+  #wordList;
+  #endTimeList;
 
-  constructor(level) {
-    this.#level = level;
+  constructor(wordList, endTimeList) {
+    this.#wordList = wordList;
+    this.#endTimeList = endTimeList;
   }
 
   generate() {
-    const targets = [new Target(this.#level)];
+    const targets = [new Target(this.#wordList, this.#endTimeList)];
 
     while (targets.length < 5) {
       const newTarget = this.createNewTarget({ targets });
@@ -19,11 +21,11 @@ export class TargetsFactory {
   }
 
   createNewTarget({ targets, hitWords = [] }) {
-    let newTarget = new Target(this.#level);
+    let newTarget = new Target(this.#wordList, this.#endTimeList);
     const words = targets.map((target) => target.word);
 
     while (this.#isDuplicateWord(newTarget, words, hitWords)) {
-      newTarget = new Target(this.#level);
+      newTarget = new Target(this.#wordList, this.#endTimeList);
     }
 
     return newTarget;

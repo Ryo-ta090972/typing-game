@@ -4,6 +4,7 @@ import { createRequire } from "module";
 import { TargetsFactory } from "./targets_factory.js";
 import { GameState } from "./game_state.js";
 import { GameScreen } from "./game_screen.js";
+import { easyWords, normalWords, hardWords } from "./word.js";
 
 export class Game {
   #targetsFactory;
@@ -11,9 +12,12 @@ export class Game {
   #soundPlayer;
 
   constructor(level) {
-    this.#targetsFactory = new TargetsFactory(level);
+    const wordList = this.#setWordList(level);
+    const endTimeList = this.#setEndTimeList(level);
+    const pointList = this.#setPointList(level);
+    this.#targetsFactory = new TargetsFactory(wordList, endTimeList);
     const targets = this.#targetsFactory.generate();
-    this.#gameState = new GameState(level, targets);
+    this.#gameState = new GameState(wordList, endTimeList, pointList, targets);
     const require = createRequire(import.meta.url);
     this.#soundPlayer = require("play-sound")();
   }
@@ -22,6 +26,42 @@ export class Game {
     await this.#startTyping();
     this.#winGameIfScoreOver();
     return this.#gameState;
+  }
+
+  #setWordList(level) {
+    const wordLists = {
+      veryEasy: easyWords,
+      easy: easyWords,
+      normal: normalWords,
+      hard: hardWords,
+      veryHard: hardWords,
+    };
+
+    return wordLists[level];
+  }
+
+  #setEndTimeList(level) {
+    const endTimeLists = {
+      veryEasy: { max: 12000, min: 9000 },
+      easy: { max: 10000, min: 7000 },
+      normal: { max: 8000, min: 5000 },
+      hard: { max: 8000, min: 5000 },
+      veryHard: { max: 7000, min: 4000 },
+    };
+
+    return endTimeLists[level];
+  }
+
+  #setPointList(level) {
+    const pointLists = {
+      veryEasy: { normal: 2, bonus: 4 },
+      easy: { normal: 1, bonus: 3 },
+      normal: { normal: 1, bonus: 2 },
+      hard: { normal: 0, bonus: 1.5 },
+      veryHard: { normal: 0, bonus: 1 },
+    };
+
+    return pointLists[level];
   }
 
   async #startTyping() {
