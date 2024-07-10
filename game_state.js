@@ -1,6 +1,9 @@
 import { Score } from "./score.js";
+import { TargetsFactory } from "./targets_factory.js";
+import { TimeManager } from "./time_manager.js";
 
 export class GameState {
+  #level;
   #score;
   #targets;
   #playTime = 60000;
@@ -12,6 +15,7 @@ export class GameState {
   #isGameWon = false;
 
   constructor(level, targets) {
+    this.#level = level;
     this.#score = new Score(level);
     this.#targets = targets;
   }
@@ -96,5 +100,44 @@ export class GameState {
 
   winGame() {
     this.#isGameWon = true;
+  }
+
+  judgeTargetWords(word) {
+    const words = this.#targets.map((target) => target.word);
+    return words.includes(word);
+  }
+
+  judgeTargetStrings(string, consecutiveHitCount) {
+    const strings = this.#targets.map((target) =>
+      target.buildString(consecutiveHitCount),
+    );
+
+    return strings.includes(string);
+  }
+
+  updateTargets() {
+    this.#targets = this.#createNewTargets();
+  }
+
+  #createNewTargets() {
+    const targetsFactory = new TargetsFactory(this.#level);
+    const newTargets = this.#targets.map((target) => {
+      const newTarget = targetsFactory.createNewTarget({
+        targets: this.#targets,
+        hitWords: this.#hitWords,
+      });
+
+      return this.#isTimeOverOrHitWord(target.endTime, target.word)
+        ? newTarget
+        : target;
+    });
+
+    return newTargets;
+  }
+
+  #isTimeOverOrHitWord(endTime, word) {
+    const timeManager = new TimeManager(endTime);
+    const isHitWord = this.#hitWords.includes(word);
+    return timeManager.isTimeOver() || isHitWord;
   }
 }

@@ -3,7 +3,6 @@ import { fileURLToPath } from "url";
 import { createRequire } from "module";
 import { TargetsFactory } from "./targets_factory.js";
 import { GameState } from "./game_state.js";
-import { Judgment } from "./judgment.js";
 import { TimeManager } from "./time_manager.js";
 import { GameScreen } from "./game_screen.js";
 
@@ -46,18 +45,11 @@ export class Game {
 
     return new Promise((resolve) => {
       const interval = setInterval(() => {
-        this.#updateTargets();
+        this.#gameState.updateTargets();
         this.#outputPlayScreen();
         this.#endIntervalIfTimeOver(interval, resolve);
       }, delay);
     });
-  }
-
-  #updateTargets() {
-    this.#gameState.targets = this.#targetsFactory.update(
-      this.#gameState.targets,
-      this.#gameState.hitWords,
-    );
   }
 
   #outputPlayScreen() {
@@ -108,9 +100,8 @@ export class Game {
 
   #toScoreAndPlaySoundAndUpdateGameState(char) {
     const hitCheckString = this.#gameState.hitString.concat(char);
-    const judgment = new Judgment(this.#gameState.targetWords);
-    const isHitWord = judgment.isHitWord(hitCheckString);
-    const isHitString = judgment.isHitString(
+    const isHitWord = this.#gameState.judgeTargetWords(hitCheckString);
+    const isHitString = this.#gameState.judgeTargetStrings(
       hitCheckString,
       this.#gameState.consecutiveHitCount,
     );

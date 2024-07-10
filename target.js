@@ -38,6 +38,11 @@ export class Target {
     return this.#indent;
   }
 
+  buildString(consecutiveHitCount) {
+    const chars = [...this.#word];
+    return chars.slice(0, consecutiveHitCount + 1).join("");
+  }
+
   #setWord(level) {
     const words = this.#wordLists[level];
     const randomIndex = Math.floor(Math.random() * words.length);
