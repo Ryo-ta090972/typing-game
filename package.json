@@ -1,0 +1,38 @@
+{
+  "name": "typing-game",
+  "version": "1.0.5",
+  "description": "## 概要",
+  "main": "typing.js",
+  "scripts": {
+    "fix": "prettier --write . && eslint --fix .",
+    "lint": "prettier --check . && eslint . && eslint src"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.5.0",
+    "eslint": "^9.5.0",
+    "eslint-config-prettier": "^9.0.0",
+    "globals": "^15.6.0",
+    "prettier": "^3.1.0"
+  },
+  "type": "module",
+  "author": "ryo-ta090972",
+  "license": "MIT",
+  "dependencies": {
+    "enquirer": "^2.4.1",
+    "play-sound": "^1.1.6"
+  },
+  "keywords": [
+    "typing"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ryo-ta090972/typing-game.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Ryo-ta090972/typing-game/issues"
+  },
+  "homepage": "https://github.com/Ryo-ta090972/typing-game#readme",
+  "bin": {
+    "typing-game": "typing.js"
+  }
+}
